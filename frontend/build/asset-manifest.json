@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/static/css/main.36bd5b17.css",
+    "main.js": "/static/js/main.ce8f1924.js",
+    "static/media/moon.jpg": "/static/media/moon.ec9d16757c33a83a4e2f.jpg",
+    "static/media/earth1.jpg": "/static/media/earth1.8d3ca0cad8eb3165e342.jpg",
+    "static/media/space2.jpg": "/static/media/space2.297ea5c3f50e6f6e2807.jpg",
+    "static/media/logoColored.png": "/static/media/logoColored.703867fb354a2c2b1d2f.png",
+    "static/media/photo_2022-09-09_23-13-29.jpg": "/static/media/photo_2022-09-09_23-13-29.95ebb3c15c7bae71b10d.jpg",
+    "static/media/IMG_20220130_123233_009.jpg": "/static/media/IMG_20220130_123233_009.962a335119cdb7c971dd.jpg",
+    "static/media/IMG_20220106_015505_216.jpg": "/static/media/IMG_20220106_015505_216.4c1384b3abd760ecd3ad.jpg",
+    "static/media/IMG_20220130_123226_626.jpg": "/static/media/IMG_20220130_123226_626.5101f8d3ba1b450a1894.jpg",
+    "static/media/kindpng_3180605.png": "/static/media/kindpng_3180605.f3cd24277d76dc2df825.png",
+    "index.html": "/index.html",
+    "main.36bd5b17.css.map": "/static/css/main.36bd5b17.css.map",
+    "main.ce8f1924.js.map": "/static/js/main.ce8f1924.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.36bd5b17.css",
+    "static/js/main.ce8f1924.js"
+  ]
+}
