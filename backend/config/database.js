@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 export const connectDatabase = () => {
   mongoose
     .connect(
-      "mongodb+srv://dior4324003:diyor914324003@cluster0.ukawswg.mongodb.net/?retryWrites=true"
+      "mongodb+srv://diyor3056:VfRiIjECchJhmMgq@>@cluster0.vkgqw.mongodb.net/?retryWrites=true"
     )
     .then((c) => {
       console.log(`Mongodb connect to: ${c.connection.host}`);
