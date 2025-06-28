@@ -27,7 +27,7 @@ const Footer = () => {
         <a href="https://www.youtube.com/@dioryoldashov" target="black">
           <BsYoutube />
         </a>
-        <a href="https://instagram.com/by_diorr/" target="black">
+        <a href="https://instagram.com/by_d1or/" target="black">
           <BsInstagram />
         </a>
         <a
@@ -35,6 +35,12 @@ const Footer = () => {
           target="black"
         >
           <BsLinkedin />
+        </a>
+               <a
+          href="https://t.me/diorbekyoldashov"
+          target="black"
+        >
+          <BsTelegram />
         </a>
       </div>
     </div>
