@@ -1,415 +1,210 @@
-import { User } from "../model/User.js";
+import { User } from "../models/User.js";
+import { Notification } from "../models/Notification.js";
+import { hashPassword, comparePassword } from "../utils/hash.js";
+import { sendTelegramAlert } from "../utils/telegram.js";
 import jwt from "jsonwebtoken";
-import { sendMail } from "../middlewares/sendMail.js";
-import cloudinary from "cloudinary";
 
-export const login = async (req, res) => {
+// 🔐 Token yuborish
+const sendToken = (user, res, message) => {
+  const token = jwt.sign({ _id: user._id, role: user.role }, process.env.JWT_SECRET, {
+    expiresIn: "1d",
+  });
+
+  res
+    .status(200)
+    .cookie("token", token, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,
+    })
+    .json({ success: true, message });
+};
+
+// 📌 Ro‘yxatdan o‘tish
+export const registerUser = async (req, res) => {
+  try {
+    const { name, email, password, avatar = null } = req.body;
+
+    const existing = await User.findOne({ email });
+    if (existing) return res.status(400).json({ success: false, message: "Email band" });
+
+    const hashed = await hashPassword(password);
+
+    const user = await User.create({
+      name,
+      email,
+      password: hashed,
+      avatar,
+    });
+
+    sendToken(user, res, "Ro‘yxatdan o‘tish muvaffaqiyatli");
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// 📌 Login
+export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email, password });
+    const user = await User.findOne({ email }).select("+password");
+    if (!user) return res.status(400).json({ success: false, message: "Foydalanuvchi topilmadi" });
 
-    if (!user) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid email or password",
-      });
-    }
+    const isMatch = await comparePassword(password, user.password);
+    if (!isMatch) return res.status(401).json({ success: false, message: "Parol noto‘g‘ri" });
 
-    const token = jwt.sign({ _id: user._id }, "process.env.JWT_SECRET");
-    // console.log(token);
-
-    res
-      .status(200)
-      .cookie("token", token, {
-        expires: new Date(Date.now() + 600000),
-        httpOnly: true,
-      })
-      .json({
-        success: true,
-        message: "Logged In Successfully",
-      });
-  } catch (error) {
-    return res.status(400).json({
-      success: false,
-      message: error.message,
-    });
+    sendToken(user, res, "Xush kelibsiz");
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
   }
 };
 
-export const logout = async (req, res) => {
-  try {
-    res
-      .status(200)
-      .cookie("token", null, {
-        expires: new Date(Date.now()),
-        httpOnly: true,
-      })
-      .json({
-        success: true,
-        message: "Logged Out Successfully",
-      });
-  } catch (error) {
-    return res.status(400).json({
-      success: false,
-      message: error.message,
-    });
-  }
+// 📌 Logout
+export const logoutUser = (req, res) => {
+  res
+    .status(200)
+    .cookie("token", "", { expires: new Date(0), httpOnly: true })
+    .json({ success: true, message: "Tizimdan chiqdingiz" });
 };
 
-export const getUser = async (req, res) => {
-  try {
-    const user = await User.findOne().select("-password -email");
-
-    res.status(200).json({
-      success: true,
-      user,
-    });
-  } catch (error) {
-    return res.status(400).json({
-      success: false,
-      message: error.message,
-    });
-  }
+// 📌 Profilni olish
+export const getMyProfile = async (req, res) => {
+  res.status(200).json({ success: true, user: req.user });
 };
 
-export const myProfile = async (req, res) => {
+// 📌 Profilni yangilash
+export const updateProfile = async (req, res) => {
   try {
+    const { name, avatar } = req.body;
     const user = await User.findById(req.user._id);
 
-    res.status(200).json({
-      success: true,
-      user,
-    });
-  } catch (error) {
-    return res.status(400).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
-export const contact = async (req, res) => {
-  try {
-    const { name, email, message } = req.body;
-
-    const userMessage = `Hey, I am ${name}. \nMy email is ${email}. \nMy message is ${message}.`;
-
-    await sendMail(userMessage);
-
-    return res.status(200).json({
-      success: true,
-      message: "Message Sent Successfully",
-    });
-  } catch (error) {
-    return res.status(400).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
-export const updateUser = async (req, res) => {
-  try {
-    const user = await User.findById(req.user._id);
-    console.log(req);
-    const { name, email, password, skills, about } = req.body;
-
-    if (name) {
-      user.name = name;
-    }
-
-    if (email) {
-      user.email = email;
-    }
-    if (password) {
-      user.password = password;
-    }
-
-    if (skills) {
-      if (skills.image1) {
-        // await cloudinary.v2.uploader.destroy(user.skills.image1.public_id);
-        const myCloud = await cloudinary.v2.uploader.upload(skills.image1, {
-          folder: "portfolio",
-        });
-
-        user.skills.image1 = {
-          public_id: myCloud.public_id,
-          url: myCloud.secure_url,
-        };
-      }
-
-      if (skills.image2) {
-        // await cloudinary.v2.uploader.destroy(user.skills.image2.public_id);
-        const myCloud = await cloudinary.v2.uploader.upload(skills.image2, {
-          folder: "portfolio",
-        });
-
-        user.skills.image2 = {
-          public_id: myCloud.public_id,
-          url: myCloud.secure_url,
-        };
-      }
-
-      if (skills.image3) {
-        // console.log(skills.image3.public_id);
-        // await cloudinary.v2.uploader.destroy(user.skills.image3.public_id);
-        const myCloud = await cloudinary.v2.uploader.upload(skills.image3, {
-          folder: "portfolio",
-        });
-
-        user.skills.image3 = {
-          public_id: myCloud.public_id,
-          url: myCloud.secure_url,
-        };
-      }
-
-      if (skills.image4) {
-        // await cloudinary.v2.uploader.destroy(user.skills.image4.public_id);
-        const myCloud = await cloudinary.v2.uploader.upload(skills.image4, {
-          folder: "portfolio",
-        });
-
-        user.skills.image4 = {
-          public_id: myCloud.public_id,
-          url: myCloud.secure_url,
-        };
-      }
-
-      if (skills.image5) {
-        // await cloudinary.v2.uploader.destroy(user.skills.image5.public_id);
-        const myCloud = await cloudinary.v2.uploader.upload(skills.image5, {
-          folder: "portfolio",
-        });
-
-        user.skills.image5 = {
-          public_id: myCloud.public_id,
-          url: myCloud.secure_url,
-        };
-      }
-
-      if (skills.image6) {
-        // await cloudinary.v2.uploader.destroy(user.skills.image6.public_id);
-        const myCloud = await cloudinary.v2.uploader.upload(skills.image6, {
-          folder: "portfolio",
-        });
-
-        user.skills.image6 = {
-          public_id: myCloud.public_id,
-          url: myCloud.secure_url,
-        };
-      }
-    }
-
-    if (about) {
-      if (about.name) {
-        user.about.name = about.name;
-      }
-      if (about.title) {
-        user.about.title = about.title;
-      }
-      if (about.subtitle) {
-        user.about.subtitle = about.subtitle;
-      }
-
-      if (about.description) {
-        user.about.description = about.description;
-      }
-      if (about.quote) {
-        user.about.quote = about.quote;
-      }
-
-      if (about.avatar) {
-        // await cloudinary.v2.uploader.destroy(user.about.avatar.public_id);
-
-        const myCloud = await cloudinary.v2.uploader.upload(about.avatar, {
-          folder: "portfolio",
-        });
-
-        user.about.avatar = {
-          public_id: myCloud.public_id,
-          url: myCloud.secure_url,
-        };
-      }
-    }
+    if (name) user.name = name;
+    if (avatar) user.avatar = avatar;
 
     await user.save();
-
-    res.status(200).json({
-      success: true,
-      message: "User Updated Successfully",
-    });
-  } catch (error) {
-    return res.status(400).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(200).json({ success: true, message: "Profil yangilandi" });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
   }
 };
 
-export const addTimeline = async (req, res) => {
+// 📌 Parolni yangilash (o‘zi)
+export const updatePassword = async (req, res) => {
   try {
-    const { title, description, date } = req.body;
+    const { oldPassword, newPassword } = req.body;
 
-    const user = await User.findById(req.user._id);
-    console.log(user._id);
+    const user = await User.findById(req.user._id).select("+password");
+    const isMatch = await comparePassword(oldPassword, user.password);
+    if (!isMatch) return res.status(401).json({ success: false, message: "Eski parol noto‘g‘ri" });
 
-    user.timeline.unshift({
-      title,
-      description,
-      date,
-    });
-
+    user.password = await hashPassword(newPassword);
     await user.save();
 
-    res.status(200).json({
-      success: true,
-      message: "Added To Timline",
-    });
-  } catch (error) {
-    return res.status(400).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(200).json({ success: true, message: "Parol yangilandi" });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
   }
 };
 
-export const addYoutube = async (req, res) => {
+// 📌 Parolni tiklash so‘rovi → adminga xabar
+export const requestPasswordReset = async (req, res) => {
   try {
-    const { url, title, image } = req.body;
+    const { email, reason } = req.body;
 
-    const user = await User.findById(req.user._id);
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ success: false, message: "Foydalanuvchi topilmadi" });
 
-    const myCloud = await cloudinary.v2.uploader.upload(image, {
-      folder: "portfolio",
+    const admin = await User.findOne({ role: "admin" });
+
+    await Notification.create({
+      sender: user._id,
+      recipient: admin._id,
+      title: "Parol tiklash so‘rovi",
+      message: reason || "Foydalanuvchi parolni tiklashni so‘radi.",
+      type: "request",
     });
-    user.youtube.unshift({
-      url,
-      title,
-      image: {
-        public_id: myCloud.public_id,
-        url: myCloud.secure_url,
-      },
-    });
 
+    await sendTelegramAlert(`🔐 Parol tiklash so‘rovi\n👤 ${user.name} (${user.email})\n📝 ${reason || "Sabab ko‘rsatilmagan"}`);
+
+    res.status(200).json({ success: true, message: "So‘rov yuborildi. Admin siz bilan bog‘lanadi." });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// 📌 Parolni tiklash (admin yoki o‘zi)
+export const resetPassword = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { newPassword } = req.body;
+
+    if (req.user.role !== "admin" && req.user._id.toString() !== id) {
+      return res.status(403).json({ success: false, message: "Ruxsat yo‘q" });
+    }
+
+    const user = await User.findById(id).select("+password");
+    if (!user) return res.status(404).json({ success: false, message: "Foydalanuvchi topilmadi" });
+
+    user.password = await hashPassword(newPassword);
     await user.save();
 
-    res.status(200).json({
-      success: true,
-      message: "Added To Youtube Videos",
-    });
-  } catch (error) {
-    return res.status(400).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(200).json({ success: true, message: "Parol tiklandi" });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
   }
 };
 
-export const addProject = async (req, res) => {
-  try {
-    const { url, title, image, description, techStack } = req.body;
-
-    const user = await User.findById(req.user._id);
-
-    const myCloud = await cloudinary.v2.uploader.upload(image, {
-      folder: "portfolio",
-    });
-    user.projects.unshift({
-      url,
-      title,
-      description,
-      techStack,
-      image: {
-        public_id: myCloud.public_id,
-        url: myCloud.secure_url,
-      },
-    });
-
-    await user.save();
-
-    res.status(200).json({
-      success: true,
-      message: "Added To Projects",
-    });
-  } catch (error) {
-    return res.status(400).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
-export const deleteTimeline = async (req, res) => {
+// 📌 Foydalanuvchini o‘chirish (admin yoki o‘zi)
+export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const user = await User.findById(req.user._id);
+    if (req.user.role !== "admin" && req.user._id.toString() !== id) {
+      return res.status(403).json({ success: false, message: "Ruxsat yo‘q" });
+    }
 
-    user.timeline = user.timeline.filter((item) => item._id != id);
+    const user = await User.findById(id);
+    if (!user) return res.status(404).json({ success: false, message: "Foydalanuvchi topilmadi" });
 
-    await user.save();
-
-    res.status(200).json({
-      success: true,
-      message: "Deleted from Timline",
-    });
-  } catch (error) {
-    return res.status(400).json({
-      success: false,
-      message: error.message,
-    });
+    await user.deleteOne();
+    res.status(200).json({ success: true, message: "Foydalanuvchi o‘chirildi" });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
   }
 };
 
-export const deleteYoutube = async (req, res) => {
+// 📌 Barcha foydalanuvchilar (admin)
+export const getAllUsers = async (req, res) => {
   try {
-    const { id } = req.params;
+    if (req.user.role !== "admin") {
+      return res.status(403).json({ success: false, message: "Faqat adminlar uchun" });
+    }
 
-    const user = await User.findById(req.user._id);
-
-    const video = user.youtube.find((video) => video._id == id);
-
-    await cloudinary.v2.uploader.destroy(video.image.public_id);
-
-    user.youtube = user.youtube.filter((video) => video._id != id);
-
-    await user.save();
-
-    res.status(200).json({
-      success: true,
-      message: "Deleted from Youtube",
-    });
-  } catch (error) {
-    return res.status(400).json({
-      success: false,
-      message: error.message,
-    });
+    const users = await User.find().select("-password");
+    res.status(200).json({ success: true, users });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
   }
 };
 
-export const deleteProject = async (req, res) => {
+// 📌 Bitta foydalanuvchini olish (admin)
+export const getSingleUser = async (req, res) => {
   try {
-    const { id } = req.params;
+    if (req.user.role !== "admin") {
+      return res.status(403).json({ success: false, message: "Faqat adminlar uchun" });
+    }
 
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.params.id).select("-password");
+    if (!user) return res.status(404).json({ success: false, message: "Foydalanuvchi topilmadi" });
 
-    const project = user.projects.find((item) => item._id == id);
-
-    await cloudinary.v2.uploader.destroy(project.image.public_id);
-
-    user.projects = user.projects.filter((item) => item._id != id);
-
-    await user.save();
-
-    res.status(200).json({
-      success: true,
-      message: "Deleted from Projects",
-    });
-  } catch (error) {
-    return res.status(400).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(200).json({ success: true, user });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
   }
 };
+
+// 📌 Rolni o‘zgartirish (admin)
+export const changeUserRole = async (req, res) => {
+  try {
+    if (req.user.role !== "admin") {
+      return res.status(403).json({ success: false, message: "Faqat admin
