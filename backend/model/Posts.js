@@ -6,9 +6,19 @@ const imageSchema = new mongoose.Schema({
 }, { _id: false });
 
 const commentSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  text: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  text: {
+    type: String,
+    required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 }, { _id: true });
 
 const postSchema = new mongoose.Schema({
@@ -22,10 +32,10 @@ const postSchema = new mongoose.Schema({
     required: [true, "Matn kerak"],
   },
   image: imageSchema,
-  likes: {
-    type: [String], // Foydalanuvchi ID yoki email
-    default: [],
-  },
+  likes: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  }],
   comments: [commentSchema],
   isDeleted: {
     type: Boolean,
