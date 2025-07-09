@@ -1,7 +1,9 @@
 import { User } from "../models/User.js";
+import { Image } from "../models/Image.js";
 import { Notification } from "../models/Notification.js";
 import { hashPassword, comparePassword } from "../utils/hash.js";
 import { sendTelegramAlert } from "../utils/telegram.js";
+import cloudinary from "../utils/cloudinary.js";
 import jwt from "jsonwebtoken";
 
 // 🔐 Token yuborish
@@ -19,10 +21,10 @@ const sendToken = (user, res, message) => {
     .json({ success: true, message });
 };
 
-// 📌 Ro‘yxatdan o‘tish
+// 📌 Ro‘yxatdan o‘tish (avatar ixtiyoriy)
 export const registerUser = async (req, res) => {
   try {
-    const { name, email, password, avatar = null } = req.body;
+    const { name, email, password } = req.body;
 
     const existing = await User.findOne({ email });
     if (existing) return res.status(400).json({ success: false, message: "Email band" });
@@ -33,7 +35,7 @@ export const registerUser = async (req, res) => {
       name,
       email,
       password: hashed,
-      avatar,
+      avatar: null,
     });
 
     sendToken(user, res, "Ro‘yxatdan o‘tish muvaffaqiyatli");
@@ -69,17 +71,44 @@ export const logoutUser = (req, res) => {
 
 // 📌 Profilni olish
 export const getMyProfile = async (req, res) => {
-  res.status(200).json({ success: true, user: req.user });
+  const user = await User.findById(req.user._id).populate("avatar");
+  res.status(200).json({ success: true, user });
 };
 
-// 📌 Profilni yangilash
+// 📌 Profilni yangilash (avatar yuklash mumkin)
 export const updateProfile = async (req, res) => {
   try {
-    const { name, avatar } = req.body;
+    const { name, avatar, avatarLabel } = req.body;
     const user = await User.findById(req.user._id);
 
     if (name) user.name = name;
-    if (avatar) user.avatar = avatar;
+
+    if (avatar) {
+      if (user.avatar) {
+        const oldImage = await Image.findById(user.avatar);
+        if (oldImage) {
+          oldImage.usedIn = null;
+          await oldImage.save();
+        }
+      }
+
+      const result = await cloudinary.v2.uploader.upload(avatar, {
+        folder: "portfolio/users",
+        quality: "auto",
+        fetch_format: "auto",
+      });
+
+      const newImage = await Image.create({
+        key: "user",
+        label: avatarLabel || user.name,
+        public_id: result.public_id,
+        url: result.secure_url,
+        uploadedBy: user._id,
+        usedIn: "user.avatar",
+      });
+
+      user.avatar = newImage._id;
+    }
 
     await user.save();
     res.status(200).json({ success: true, message: "Profil yangilandi" });
@@ -88,7 +117,7 @@ export const updateProfile = async (req, res) => {
   }
 };
 
-// 📌 Parolni yangilash (o‘zi)
+// 📌 Parolni yangilash
 export const updatePassword = async (req, res) => {
   try {
     const { oldPassword, newPassword } = req.body;
@@ -106,7 +135,7 @@ export const updatePassword = async (req, res) => {
   }
 };
 
-// 📌 Parolni tiklash so‘rovi → adminga xabar
+// 📌 Parolni tiklash so‘rovi
 export const requestPasswordReset = async (req, res) => {
   try {
     const { email, reason } = req.body;
@@ -154,7 +183,7 @@ export const resetPassword = async (req, res) => {
   }
 };
 
-// 📌 Foydalanuvchini o‘chirish (admin yoki o‘zi)
+// 📌 Foydalanuvchini o‘chirish
 export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -165,6 +194,14 @@ export const deleteUser = async (req, res) => {
 
     const user = await User.findById(id);
     if (!user) return res.status(404).json({ success: false, message: "Foydalanuvchi topilmadi" });
+
+    if (user.avatar) {
+      const avatar = await Image.findById(user.avatar);
+      if (avatar) {
+        avatar.usedIn = null;
+        await avatar.save();
+      }
+    }
 
     await user.deleteOne();
     res.status(200).json({ success: true, message: "Foydalanuvchi o‘chirildi" });
@@ -180,7 +217,7 @@ export const getAllUsers = async (req, res) => {
       return res.status(403).json({ success: false, message: "Faqat adminlar uchun" });
     }
 
-    const users = await User.find().select("-password");
+    const users = await User.find().select("-password").populate("avatar");
     res.status(200).json({ success: true, users });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -194,7 +231,7 @@ export const getSingleUser = async (req, res) => {
       return res.status(403).json({ success: false, message: "Faqat adminlar uchun" });
     }
 
-    const user = await User.findById(req.params.id).select("-password");
+    const user = await User.findById(req.params.id).select("-password").populate("avatar");
     if (!user) return res.status(404).json({ success: false, message: "Foydalanuvchi topilmadi" });
 
     res.status(200).json({ success: true, user });
@@ -207,4 +244,20 @@ export const getSingleUser = async (req, res) => {
 export const changeUserRole = async (req, res) => {
   try {
     if (req.user.role !== "admin") {
-      return res.status(403).json({ success: false, message: "Faqat admin
+      return res.status(403).json({ success: false, message: "Faqat adminlar uchun" });
+    }
+
+    const { id } = req.params;
+    const { role } = req.body;
+
+    const user = await User.findById(id);
+    if (!user) return res.status(404).json({ success: false, message: "Foydalanuvchi topilmadi" });
+
+    user.role = role;
+    await user.save();
+
+    res.status(200).json({ success: true, message: `Rol "${role}" ga o‘zgartirildi` });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
