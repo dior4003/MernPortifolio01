@@ -1,17 +1,36 @@
+// app.js
 import express from "express";
-import cookieParser from "cookie-parser";
-import path from "path";
-export const app = express();
+import helmet from "helmet";
+import cors from "cors";
+import xssClean from "xss-clean";
+import mongoSanitize from "express-mongo-sanitize";
+import dotenv from "dotenv";
+import { limiter } from "./middlewares/rateLimiter.js";
+import { notFound, errorHandler } from "./middlewares/errorHandler.js";
+import { logRequest } from "./middlewares/logRequest.js";
+import routes from "./routes/index.js";
 
-app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({ extended: true, limit: "50mb" }));
-app.use(cookieParser());
+dotenv.config();
 
-import { userRouter } from "./routes/User.js";
-app.use("/api/v1", userRouter);
+const app = express();
 
-app.use(express.static(path.resolve("./frontend/build")));
+// 🔒 Xavfsizlik middleware’lari
+app.use(helmet());
+app.use(cors({
+  origin: process.env.FRONTEND_URL,
+  credentials: true,
+}));
+app.use(express.json({ limit: "10mb" }));
+app.use(xssClean());
+app.use(mongoSanitize());
+app.use(logRequest);
+app.use(limiter);
 
-app.get("*", (req, res) => {
-  res.sendFile(path.resolve("./frontend/build/index.html"));
-});
+// 📦 API route’lar
+app.use("/api", routes);
+
+// ❌ 404 va error handler
+app.use(notFound);
+app.use(errorHandler);
+
+export default app;
