@@ -1,29 +1,31 @@
 import { Notification } from "../models/Notification.js";
 import { User } from "../models/User.js";
 
-// 🔔 Bildirishnoma yuborish (admin yoki user)
+// 📥 Notification yuborish (admin yoki foydalanuvchi)
 export const sendNotification = async (req, res) => {
   try {
-    const { recipientId, title, message, type = "info" } = req.body;
+    const { recipientId, title, message, type = "custom", link = null } = req.body;
 
     const recipient = await User.findById(recipientId);
     if (!recipient) return res.status(404).json({ success: false, message: "Qabul qiluvchi topilmadi" });
 
     const notification = await Notification.create({
       sender: req.user._id,
-      recipient: recipientId,
+      recipient: recipient._id,
       title,
       message,
       type,
+      link,
+      isRead: false,
     });
 
-    res.status(201).json({ success: true, notification });
+    res.status(201).json({ success: true, message: "Bildirishnoma yuborildi", notification });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
 };
 
-// 📥 Mening bildirishnomalarim
+// 📋 Mening barcha bildirishnomalarim
 export const getMyNotifications = async (req, res) => {
   try {
     const notifications = await Notification.find({ recipient: req.user._id })
@@ -37,13 +39,13 @@ export const getMyNotifications = async (req, res) => {
 };
 
 // ✅ O‘qilgan deb belgilash
-export const markAsRead = async (req, res) => {
+export const markNotificationAsRead = async (req, res) => {
   try {
-    const notification = await Notification.findById(req.params.id);
-    if (!notification) return res.status(404).json({ success: false, message: "Bildirishnoma topilmadi" });
+    const { id } = req.params;
 
-    if (notification.recipient.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ success: false, message: "Ruxsat yo‘q" });
+    const notification = await Notification.findById(id);
+    if (!notification || notification.recipient.toString() !== req.user._id.toString()) {
+      return res.status(404).json({ success: false, message: "Bildirishnoma topilmadi" });
     }
 
     notification.isRead = true;
@@ -55,14 +57,14 @@ export const markAsRead = async (req, res) => {
   }
 };
 
-// 🗑️ Bildirishnomani o‘chirish
+// 🗑️ O‘chirish
 export const deleteNotification = async (req, res) => {
   try {
-    const notification = await Notification.findById(req.params.id);
-    if (!notification) return res.status(404).json({ success: false, message: "Topilmadi" });
+    const { id } = req.params;
 
-    if (notification.recipient.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ success: false, message: "Ruxsat yo‘q" });
+    const notification = await Notification.findById(id);
+    if (!notification || notification.recipient.toString() !== req.user._id.toString()) {
+      return res.status(404).json({ success: false, message: "Bildirishnoma topilmadi" });
     }
 
     await notification.deleteOne();
