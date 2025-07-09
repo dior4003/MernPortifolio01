@@ -1,18 +1,29 @@
-import { app } from "./app.js";
+import mongoose from "mongoose";
 import dotenv from "dotenv";
-import { connectDatabase } from "./config/database.js";
-import cloudinary from "cloudinary";
+import app from "./app.js";
 
-dotenv.config({ path: "./backend/config/config.env" });
+dotenv.config();
 
-connectDatabase();
+const PORT = process.env.PORT || 5000;
+const MONGO_URI = process.env.MONGO_URI;
 
-cloudinary.v2.config({
-  cloud_name: "dz0usc7xe",
-  api_key: "773251549637743",
-  api_secret: "px2gy6V98c6nrzL0ZON7ZQd1OF0",
-});
+const startServer = async () => {
+  try {
+    await mongoose.connect(MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
 
-app.listen(process.env.PORT, () => {
-  console.log(`Server is running on port: ${process.env.PORT} `);
-});
+    console.log("✅ MongoDB ulandi");
+
+    app.listen(PORT, () => {
+      console.log(`🚀 Server http://localhost:${PORT} portda ishga tushdi`);
+    });
+    
+  } catch (err) {
+    console.error("❌ MongoDB ulanishda xatolik:", err.message);
+    process.exit(1);
+  }
+};
+
+startServer();
