@@ -163,7 +163,7 @@ npm run test
 ## 📄 License
 
 MIT License © 2025  
-Developed by [Diyor4003](https://github.com/diyor4003)
+Developed by [Dior4003](https://github.com/dior4003)
 
 ---
 
