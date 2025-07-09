@@ -27,12 +27,19 @@ Modular, secure, and scalable REST API built with Express.js, MongoDB, and Cloud
 ├── server.js
 
 ├── routes/
+
 ├── controllers/
+
 ├── models/
+
 ├── middlewares/
+
 ├── utils/
+
 ├── config/
+
 ├── tests/
+
 └── docs/
 ```
 
