@@ -22,7 +22,7 @@ Modular, secure, and scalable REST API built with Express.js, MongoDB, and Cloud
 ## 🧩 Project Structure
 
 ```
-├── app.js
+├── app.js 
 ├── server.js
 ├── routes/
 ├── controllers/
