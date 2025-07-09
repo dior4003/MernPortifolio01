@@ -1,42 +1,29 @@
 import mongoose from "mongoose";
 
-const imageSchema = new mongoose.Schema({
-  public_id: String,
-  url: String,
-}, { _id: false });
-
-const commentSchema = new mongoose.Schema({
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
-  text: {
-    type: String,
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-}, { _id: true });
-
 const postSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: [true, "Sarlavha kerak"],
+    required: [true, "Sarlavha majburiy"],
     trim: true,
   },
   content: {
     type: String,
-    required: [true, "Matn kerak"],
+    required: [true, "Kontent majburiy"],
   },
-  image: imageSchema,
-  likes: [{
+  tags: {
+    type: [String],
+    default: [],
+  },
+  image: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-  }],
-  comments: [commentSchema],
+    ref: "Image",
+  },
+  likes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    }
+  ],
   isDeleted: {
     type: Boolean,
     default: false,
