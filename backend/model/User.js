@@ -25,9 +25,10 @@ const userSchema = new mongoose.Schema({
     default: "user",
   },
   avatar: {
-    public_id: String,
-    url: String,
-  },
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "Image",
+  default: null,
+},
 }, {
   timestamps: true,
 });
