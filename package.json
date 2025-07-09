@@ -5,17 +5,36 @@
   "main": "backend/server.js",
   "type": "module",
   "dependencies": {
-    "cloudinary": "^1.29.0",
+    ""axios": "^1.6.7",
+    "bcrypt": "^5.1.1",
+    "cloudinary": "^1.37.1",
     "cookie-parser": "^1.4.6",
-    "dotenv": "^16.0.0",
-    "express": "^4.17.3",
-    "jsonwebtoken": "^8.5.1",
-    "mongoose": "^6.2.8",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "dotenv-expand": "^10.0.0",
+    "express": "^4.18.2",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "^6.7.0",
+    "helmet": "^7.0.0",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^7.6.3",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
     "node-telegram-bot-api": "^0.61.0",
-    "nodemailer": "^6.7.3"
+    "slugify": "^1.6.6",
+    "uuid": "^9.0.0",
+    "validator": "^13.11.0",
+    "xss-clean": "^0.1.1",
+    "dayjs": "^1.11.10",
+    "compression": "^1.7.4"
   },
   "devDependencies": {
-    "nodemon": "^2.0.20"
+    "nodemon": "^3.1.0",
+    "jest": "^29.7.0",
+    "supertest": "^6.3.4",
+    "eslint": "^8.56.0",
+    "husky": "^8.0.3",
+    "cross-env": "^7.0.3"
   },
   "scripts": {
     "start": "node backend/server.js",
