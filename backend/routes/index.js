@@ -3,7 +3,7 @@ import express from "express";
 import postRoutes from "./postRoutes.js";
 import commentRoutes from "./commentRoute.js";
 import timelineRoutes from "./timelineRoutes.js";
-import userRoutes from "./userRoutes.js";
+import userRoutes from "./User.js";
 import visitRoutes from "./visitRoutes.js";
 import aboutRoutes from "./aboutRoute.js";
 import aboutMeRoutes from "./aboutMeRoutes.js";
