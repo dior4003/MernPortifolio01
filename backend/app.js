@@ -7,7 +7,7 @@ import mongoSanitize from "express-mongo-sanitize";
 import dotenv from "dotenv";
 import { limiter } from "./middlewares/rateLimiter.js";
 import { notFound, errorHandler } from "./middlewares/errorHandler.js";
-import { logRequest } from "./middlewares/logRequest.js";
+import { logRequest } from "./middlewares/logRequests.js";
 import routes from "./routes/index.js";
 
 dotenv.config();
