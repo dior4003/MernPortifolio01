@@ -7,7 +7,7 @@ import userRoutes from "./User.js";
 import visitRoutes from "./visitRoutes.js";
 import aboutRoutes from "./aboutRoute.js";
 import aboutMeRoutes from "./aboutMeRoutes.js";
-import massageRoutes from "./massageRoutes.js";
+import massageRoutes from "./messageRoutes.js";
 import skillsRoutes from "./skillsRoutes.js";
 import projectRoutes from "./projectRoutes.js";
 import { notificationRoutes } from "./notificationRoute.js";
