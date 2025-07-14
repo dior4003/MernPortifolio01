@@ -4,7 +4,7 @@ import {
   createSkill,
   updateSkill,
   deleteSkill,
-} from "../controllers/Skills controller.js";
+} from "../controller/Skills controller.js";
 import { isAuthenticated, isAdmin } from "../middlewares/auth.js";
 
 const router = express.Router();
