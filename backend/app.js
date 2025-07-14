@@ -10,7 +10,7 @@ import { notFound, errorHandler } from "./middlewares/errorHandler.js";
 import { logRequest } from "./middlewares/logRequests.js";
 import routes from "./routes/index.js";
 
-dotenv.config();
+dotenv.config({path:"./backend/config/config.env"})
 
 const app = express();
 
@@ -28,6 +28,9 @@ app.use(limiter);
 
 // 📦 API route’lar
 app.use("/api", routes);
+app.get("/ping",(req,res)=>{
+  res.send("its work!!!")
+})
 
 // ❌ 404 va error handler
 app.use(notFound);

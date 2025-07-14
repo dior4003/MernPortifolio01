@@ -1,6 +1,6 @@
 import express from "express";
 import {
-  getProjects,
+  getAllProjects,
   createProject,
   updateProject,
   deleteProject,
@@ -9,7 +9,7 @@ import { isAuthenticated, isAdmin } from "../middlewares/auth.js";
 
 const router = express.Router();
 
-router.get("/", getProjects);
+router.get("/", getAllProjects);
 router.post("/", isAuthenticated, isAdmin, createProject);
 router.put("/:id", isAuthenticated, isAdmin, updateProject);
 router.delete("/:id", isAuthenticated, isAdmin, deleteProject);

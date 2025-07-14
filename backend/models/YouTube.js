@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 const youtubeSchema = new mongoose.Schema({
   title: { type: String, required: true },
   url: { type: String, required: true },
@@ -5,3 +7,5 @@ const youtubeSchema = new mongoose.Schema({
 }, {
   timestamps: true,
 });
+
+export const Youtube =mongoose.model("Youtube",youtubeSchema)

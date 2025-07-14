@@ -11,7 +11,7 @@ export const getAboutMe = async (req, res) => {
 };
 
 // ✏️ Admin yaratadi yoki yangilaydi
-export const upsertAboutMe = async (req, res) => {
+export const updateAboutMe = async (req, res) => {
   try {
     const { items } = req.body;
 

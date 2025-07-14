@@ -2,8 +2,8 @@ import { User } from "../models/User.js";
 import { Image } from "../models/Image.js";
 import { Notification } from "../models/Notification.js";
 import { hashPassword, comparePassword } from "../utils/hash.js";
-import { sendTelegramAlert } from "../utils/telegram.js";
-import cloudinary from "../utils/cloudinary.js";
+import { sendTelegramAlert } from "../utils/SendTelegramNotifications.js";
+import cloudinary from "../utils/Cloudinary.js";
 import jwt from "jsonwebtoken";
 
 // 🔐 Token yuborish

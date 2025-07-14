@@ -1,6 +1,6 @@
 import { Project } from "../models/Project.js";
 import { Image } from "../models/Image.js";
-import cloudinary from "../utils/cloudinary.js";
+import cloudinary from "../utils/Cloudinary.js";
 
 // 📥 Yangi loyiha + rasm yuklash
 export const createProject = async (req, res) => {

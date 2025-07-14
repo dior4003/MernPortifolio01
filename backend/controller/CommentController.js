@@ -1,5 +1,5 @@
 import { Comment } from "../models/Comment.js";
-import { Post } from "../models/Post.js";
+import { Post } from "../models/Posts.js";
 
 // 💬 Izoh qo‘shish
 export const addComment = async (req, res) => {

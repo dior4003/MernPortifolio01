@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 const visitSchema = new mongoose.Schema({
   ip: String,
   userAgent: String,
@@ -16,6 +18,7 @@ const visitSchema = new mongoose.Schema({
   },
   duration: {
     type: Number, // sekundlarda
-    default: 0,
+    
   },
 }, { timestamps: true });
+export const Visit = mongoose.model("Visit" , visitSchema)

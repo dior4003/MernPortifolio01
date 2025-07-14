@@ -1,9 +1,9 @@
-import { Youtube } from "../models/Youtube.js";
+import { Youtube } from "../models/YouTube.js";
 import { Image } from "../models/Image.js";
-import cloudinary from "../utils/cloudinary.js";
+import cloudinary from "../utils/Cloudinary.js";
 
 // 📥 Yangi video qo‘shish
-export const createYoutube = async (req, res) => {
+export const createVideo = async (req, res) => {
   try {
     const { title, url, image, imageLabel } = req.body;
 
@@ -35,7 +35,7 @@ export const createYoutube = async (req, res) => {
 };
 
 // 📋 Barcha videolar
-export const getAllYoutube = async (req, res) => {
+export const getVideos = async (req, res) => {
   try {
     const videos = await Youtube.find().sort({ createdAt: -1 }).populate("image");
     res.status(200).json({ success: true, videos });
@@ -43,3 +43,19 @@ export const getAllYoutube = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+export const deleteVideo = async (req, res) => 
+  {
+    try {
+        const { id } = req.params;
+
+        const video = await Youtube.findById(id);
+        if (!video) return res.status(404).json({ success: false, message: "Topilmadi" });
+
+         await video.deleteOne();
+         res.status(200).json({ success: true, message: "Video o‘chirildi" });
+    } catch (err) {
+                 
+      res.status(500).json({ success: false, message: err.message });
+     }
+    };

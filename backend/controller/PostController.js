@@ -1,6 +1,6 @@
 import { Post } from "../models/Posts.js";
 import { Image } from "../models/Image.js";
-import cloudinary from "../utils/cloudinary.js";
+import cloudinary from "../utils/Cloudinary.js";
 
 // 📥 Post yaratish
 export const createPost = async (req, res) => {

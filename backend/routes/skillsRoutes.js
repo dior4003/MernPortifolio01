@@ -1,17 +1,15 @@
 import express from "express";
 import {
   getSkills,
-  createSkill,
-  updateSkill,
-  deleteSkill,
+  uploadSkillImage
+  
 } from "../controller/Skills controller.js";
 import { isAuthenticated, isAdmin } from "../middlewares/auth.js";
 
 const router = express.Router();
 
 router.get("/", getSkills);
-router.post("/", isAuthenticated, isAdmin, createSkill);
-router.put("/:id", isAuthenticated, isAdmin, updateSkill);
-router.delete("/:id", isAuthenticated, isAdmin, deleteSkill);
+router.post("/", isAuthenticated, isAdmin,uploadSkillImage);
+router.put("/:id", isAuthenticated, isAdmin, uploadSkillImage);
 
 export default router;

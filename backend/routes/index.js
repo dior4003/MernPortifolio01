@@ -10,7 +10,7 @@ import aboutMeRoutes from "./aboutMeRoutes.js";
 import massageRoutes from "./messageRoutes.js";
 import skillsRoutes from "./skillsRoutes.js";
 import projectRoutes from "./projectRoutes.js";
-import { notificationRoutes } from "./notificationRoute.js";
+import notificationRoutes from "./notificationRoute.js";
 import youtubeRoutes from "./youtubeRoutes.js";
 
 const router = express.Router();

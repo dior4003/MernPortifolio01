@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 const aboutSchema = new mongoose.Schema({
   name: String,
   title: String,
@@ -8,3 +10,5 @@ const aboutSchema = new mongoose.Schema({
 }, {
   timestamps: true,
 });
+
+export const About=mongoose.model("About",aboutSchema)

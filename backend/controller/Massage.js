@@ -1,7 +1,7 @@
-import { Message } from "../models/Message.js";
+import { Message } from "../models/Massage.js";
 import { Notification } from "../models/Notification.js";
 import { User } from "../models/User.js";
-import { sendTelegramAlert } from "../utils/telegram.js";
+import { sendTelegramAlert } from "../utils/SendTelegramNotifications.js";
 
 // 📥 Xabar yuborish + admin uchun notification
 export const sendMessage = async (req, res) => {

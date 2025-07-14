@@ -1,6 +1,6 @@
 import { Skills } from "../models/Skills.js";
 import { Image } from "../models/Image.js";
-import cloudinary from "../utils/cloudinary.js";
+import cloudinary from "../utils/Cloudinary.js";
 
 // 📥 Bitta skill rasm yuklash
 export const uploadSkillImage = async (req, res) => {

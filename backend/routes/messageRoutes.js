@@ -1,15 +1,17 @@
 import express from "express";
 import {
-  sendMassage,
-  getMassages,
-  deleteMassage,
+  sendMessage,
+  getAllMessages,
+  deleteMessage,
+  markAsRead
 } from "../controller/Massage.js";
 import { isAuthenticated, isAdmin } from "../middlewares/auth.js";
 
 const router = express.Router();
 
-router.post("/", sendMassage);
-router.get("/", isAuthenticated, isAdmin, getMassages);
-router.delete("/:id", isAuthenticated, isAdmin, deleteMassage);
+router.post("/", sendMessage);
+router.get("/", isAuthenticated, isAdmin, getAllMessages);
+router.delete("/:id", isAuthenticated, isAdmin, deleteMessage);
+router.get("/:id",isAuthenticated,markAsRead)
 
 export default router;
