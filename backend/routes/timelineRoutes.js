@@ -4,7 +4,7 @@ import {
   createTimeline,
   updateTimeline,
   deleteTimeline,
-} from "../controller/TimelineController.js";
+} from "../controller/timelineController.js";
 import { isAuthenticated, isAdmin } from "../middlewares/auth.js";
 
 const router = express.Router();
