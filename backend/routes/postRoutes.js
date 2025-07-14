@@ -6,7 +6,7 @@ import {
   updatePost,
   deletePost,
   toggleLike,
-} from "../controllers/PostController.js";
+} from "../controller/PostController.js";
 import { isAuthenticated, isAdmin } from "../middlewares/auth.js";
 
 const router = express.Router();
