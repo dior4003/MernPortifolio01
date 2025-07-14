@@ -4,7 +4,7 @@ import {
   createAboutMe,
   updateAboutMe,
   deleteAboutMe,
-} from "../controllers/AboutMe.js";
+} from "../controller/AboutMe.js";
 import { isAuthenticated, isAdmin } from "../middlewares/auth.js";
 
 const router = express.Router();
