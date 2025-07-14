@@ -3,7 +3,7 @@ import {
   addComment,
   getCommentsByPost,
   deleteComment,
-} from "../controllers/CommentController.js";
+} from "../controller/CommentController.js";
 import { isAuthenticated } from "../middlewares/auth.js";
 
 const router = express.Router();
