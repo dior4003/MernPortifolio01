@@ -3,7 +3,7 @@ import {
   logVisit,
   getVisitStats,
   clearVisits,
-} from "../controllers/VisitController.js";
+} from "../controller/VisitController.js";
 import { isAuthenticated, isAdmin } from "../middlewares/auth.js";
 
 const router = express.Router();
