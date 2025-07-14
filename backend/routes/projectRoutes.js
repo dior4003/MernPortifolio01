@@ -4,7 +4,7 @@ import {
   createProject,
   updateProject,
   deleteProject,
-} from "../controllers/projectController.js";
+} from "../controller/projectController.js";
 import { isAuthenticated, isAdmin } from "../middlewares/auth.js";
 
 const router = express.Router();
