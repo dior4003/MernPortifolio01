@@ -3,7 +3,7 @@ import {
   sendMassage,
   getMassages,
   deleteMassage,
-} from "../controllers/Massage.js";
+} from "../controller/Massage.js";
 import { isAuthenticated, isAdmin } from "../middlewares/auth.js";
 
 const router = express.Router();
