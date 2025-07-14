@@ -3,7 +3,7 @@ import {
   getVideos,
   createVideo,
   deleteVideo,
-} from "../controllers/YouTube controller.js";
+} from "../controller/YouTube controller.js";
 import { isAuthenticated, isAdmin } from "../middlewares/auth.js";
 
 const router = express.Router();
