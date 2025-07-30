@@ -1,4 +1,4 @@
-import bcryptjs from "bcryptjs";
+import bcrypt from "bcrypt";
 
 /**
  * Parolni hashlaydi
@@ -7,7 +7,7 @@ import bcryptjs from "bcryptjs";
  * @returns {String} - Hashed parol
  */
 export const hashPassword = async (plainPassword, saltRounds = 10) => {
-  return await bcryptjs.hash(plainPassword, saltRounds);
+  return await bcrypt.hash(plainPassword, saltRounds);
 };
 
 /**
@@ -17,5 +17,5 @@ export const hashPassword = async (plainPassword, saltRounds = 10) => {
  * @returns {Boolean} - True agar mos bo‘lsa
  */
 export const comparePassword = async (plainPassword, hashedPassword) => {
-  return await bcryptjs.compare(plainPassword, hashedPassword);
+  return await bcrypt.compare(plainPassword, hashedPassword);
 };
