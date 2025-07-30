@@ -18,7 +18,7 @@ const sendToken = (user, res, message) => {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
     })
-    .json({ success: true, message });
+    .json({user:user, success: true, message });
 };
 
 // 📌 Ro‘yxatdan o‘tish (avatar ixtiyoriy)
