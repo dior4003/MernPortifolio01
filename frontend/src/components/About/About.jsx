@@ -30,10 +30,10 @@ const About = ({ about }) => {
         <div>
           <Typography
             style={{
-              wordSpacing: "5px",
-              lineHeight: "50px",
-              letterSpacing: "5px",
-              textAlign: "right",
+              wordSpacing: "4px",
+              lineHeight: "30px",
+              letterSpacing: "4px",
+              textAlign: "left",
             }}
           >
             {about.description}

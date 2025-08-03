@@ -20,7 +20,7 @@ import YoutubeCard from "../YoutubeCard/YoutubeCard";
 import { Link } from "react-router-dom";
 import HomeAbout from "../HomeAbout/HomeAbout";
 
-const Home = ({ timelines, youtubes, skills ,aboutme}) => {
+const Home = ({ timelines, youtubes, skills ,aboutme,author}) => {
   useEffect(() => {
     const textureLoader = new THREE.TextureLoader();
 
@@ -200,7 +200,9 @@ const Home = ({ timelines, youtubes, skills ,aboutme}) => {
               image={item.image.url}
               title={item.title}
               url={item.url}
+              date={item.date}
               id={item._id}
+	      author={author.avatar}
               key={item._id}
             />
           ))}

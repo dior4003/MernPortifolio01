@@ -29,7 +29,7 @@
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  padding: 5vmax;
+  padding: 2vmax;
   padding-bottom: 10vmax;
 
   overflow-x: hidden;
@@ -64,7 +64,7 @@
 .projectCard > div:first-child::after {
   content: "VIEW DEMO";
   width: 100%;
-  height: 100%;
+  height: 6vh;
   font: 100 2rem "Roboto";
   align-items: center;
   justify-content: center;
@@ -84,9 +84,9 @@
 }
 
 .projectCard > div:last-child > p {
-  letter-spacing: 5px;
-  word-spacing: 5px;
-  text-align: right;
+  letter-spacing: 1px;
+  word-spacing: 1px;
+  text-align: left;
 }
 .projectCard > div:last-child > h6 {
   font-family: "Ubuntu Mono";
@@ -115,6 +115,7 @@
 
 @media screen and (max-width: 600px) {
   .projectCard {
+    width:100%;
     flex-direction: column;
   }
 
@@ -126,6 +127,6 @@
   }
 
   .projectCard > div:last-child > p {
-    text-align: center;
+    text-align: left;
   }
 }

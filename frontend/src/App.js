@@ -44,6 +44,7 @@ function App() {
                   timelines={user.timeline}
                   skills={user.skills}
                   aboutme={user.about_me}
+		  author={user.about}
                 />
               }
             />
