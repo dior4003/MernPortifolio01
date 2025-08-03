@@ -18,7 +18,12 @@ const visitSchema = new mongoose.Schema({
   },
   duration: {
     type: Number, // sekundlarda
-    
+    default: 0,   // ⏱️ agar duration bo'lmasa 0 sifatida saqlanadi
   },
-}, { timestamps: true });
-export const Visit = mongoose.model("Visit" , visitSchema)
+  updates: {
+    type: [Date], // 🔄 har bir update vaqti bu arrayga push qilinadi
+    default: [],  // 🔔 boshlang‘ich qiymat bo‘sh massiv
+  },
+}, { timestamps: true }); // createdAt & updatedAt avtomatik
+
+export const Visit = mongoose.model("Visit", visitSchema);
