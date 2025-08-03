@@ -9,7 +9,7 @@ import { limiter } from "./middlewares/rateLimiter.js";
 import { notFound, errorHandler } from "./middlewares/errorHandler.js";
 import { logRequest } from "./middlewares/logRequests.js";
 import routes from "./routes/index.js";
-import { logVisitMiddleware } from "./middleware/logVisitMiddleware.js";
+import { logVisitMiddleware } from "./middlewares/logVisitMiddleware.js";
 
 dotenv.config({path:"./backend/config/config.env"})
 
