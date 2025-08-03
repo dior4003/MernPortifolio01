@@ -1,7 +1,7 @@
 import { Visit } from "../models/Visit.js";
 
 // 📥 Tashrifni log qilish (har kim)
-export const logVisit = async (req, res) => {
+
 export const logVisit = async (req, res) => {
   try {
     const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
