@@ -26,6 +26,6 @@ router.use("/massages", massageRoutes);
 router.use("/skills", skillsRoutes);
 router.use("/projects", projectRoutes);
 router.use("/youtube", youtubeRoutes);
-router.use("/notification ",notificationRoutes);
+router.use("/notification",notificationRoutes);
 
 export default router;
